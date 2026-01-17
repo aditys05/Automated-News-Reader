@@ -1,23 +1,35 @@
-
-def speak(str):
-    from win32com.client import Dispatch
-    sp = Dispatch("SAPI.spvoice")
-    sp.Speak(str)
-import json
 import requests
+import pyttsx3
 
-apiKey = "64882efd57be44d49fdaa8098c97fc40"
-url = f"https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey={apiKey}"
-webdata = requests.get(url)
-
-atJson = webdata.json()
-
-
-a = atJson['articles']
+def speak(text):
+   engine = pyttsx3.init()
+   engine.say(text)
+   engine.runAndWait()
 
 
-for items in a:
-        print(f"the news is : \t{items['title']}.") 
-        speak(f"The headline is: \n{items['title']}")
-speak("this is the end of the news\n thank you for listning \n now you have a good day and good night")
+apiKey = "YOUR_NEWSAPI_KEY"
+URL = f"https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey={apiKey}"
+
+response = requests.get(URL)
+
+data = response.json()
+
+
+articles = data.get('articles', [])  
+
+if not articles:
+    print("No Technological news articles found.")
+    speak("No Technological news articles found.")
+else:
+    print("Latest Technological news:\n")
+    speak("Here are the latest technological news headlines for you.")
+
+
+    for article in articles:
+        title = article.get("title")
+        if title:
+            print(f"Headline : {title}") 
+        speak(f"- {title}")
+
+speak("This is the end of the news\n thank you for listning \n Now you have a Good Day and Good Night")
 
